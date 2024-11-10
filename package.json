@@ -1,0 +1,193 @@
+{
+  "name": "keyshade-xyz",
+  "version": "2.6.0",
+  "license": "MPL-2.0",
+  "private": true,
+  "engineStrict": false,
+  "packageManager": "pnpm@9.2.0",
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits",
+          "parserOpts": {
+            "noteKeywords": [
+              "BREAKING CHANGE",
+              "BREAKING CHANGES",
+              "BREAKING"
+            ]
+          },
+          "presetConfig": {
+            "releaseCommitMessageFormat": "chore(release): {{currentTag}} [skip ci]\n\n{{currentTag}}\n\n{{notes}}",
+            "types": [
+              {
+                "type": "feat",
+                "section": "🚀 Features"
+              },
+              {
+                "type": "fix",
+                "section": "🐛 Bug Fixes"
+              },
+              {
+                "type": "perf",
+                "section": "⚡ Performance Improvements"
+              },
+              {
+                "type": "revert",
+                "section": "🔙 Reverts"
+              },
+              {
+                "type": "docs",
+                "section": "📚 Documentation"
+              },
+              {
+                "type": "style",
+                "section": "💅 Styles"
+              },
+              {
+                "type": "chore",
+                "section": "🔧 Miscellaneous Chores"
+              },
+              {
+                "type": "refactor",
+                "section": "🔨 Code Refactoring"
+              },
+              {
+                "type": "test",
+                "hidden": true
+              },
+              {
+                "type": "postman",
+                "hidden": true
+              }
+            ]
+          }
+        }
+      ],
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      "@semantic-release/npm",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md",
+            "package.json"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
+      "@semantic-release/github"
+    ]
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:api": "turbo run dev --filter=api",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:platform": "turbo run dev --filter=platform",
+    "dev:cli": "turbo run dev --filter=cli",
+    "add:global": "pnpm add -w",
+    "add:api": "pnpm add --filter=api",
+    "add:web": "pnpm add --filter=web",
+    "add:platform": "pnpm add --filter=platform",
+    "add:cli": "pnpm add --filter=cli",
+    "lint": "turbo run lint",
+    "lint:api": "turbo run lint --filter=api",
+    "lint:web": "turbo run lint --filter=web",
+    "lint:platform": "turbo run lint --filter=platform",
+    "lint:cli": "turbo run lint --filter=cli",
+    "lint:api-client": "turbo run lint --filter=api-client",
+    "lint:secret-scan": "turbo run lint --filter=secret-scan",
+    "lint:schema": "turbo run lint --filter=schema",
+    "build": "turbo run build",
+    "build:api": "pnpm db:generate-types && turbo run build --filter=api",
+    "build:web": "turbo run build --filter=web",
+    "build:platform": "turbo run build --filter=platform",
+    "build:cli": "pnpm build:secret-scan && pnpm build:api-client && turbo run build --filter=cli",
+    "build:api-client": "turbo run --filter=api-client build",
+    "build:schema": "turbo run build --filter=schema",
+    "build:secret-scan": "turbo run build --filter=secret-scan",
+    "start": "turbo run start",
+    "start:api": "turbo run start --filter=api",
+    "start:web": "turbo run start --filter=web",
+    "start:platform": "turbo run start --filter=platform",
+    "start:cli": "turbo run start --filter=cli",
+    "test": "turbo run test",
+    "test:api": "pnpm unit:api && pnpm e2e:api",
+    "unit:api": "pnpm run --filter=api unit",
+    "e2e:api": "pnpm run --filter=api e2e -- --verbose --testMatch='**/secret/*.e2e.spec.ts'",
+    "test:web": "turbo run test --filter=web",
+    "test:platform": "turbo run test --filter=platform",
+    "test:api-client": "pnpm run --filter=api-client test",
+    "test:schema": "pnpm run --filter=schema test",
+    "test:secret-scan": "pnpm run --filter=secret-scan test",
+    "db:generate-types": "pnpm run --filter=api db:generate-types",
+    "db:generate-migrations": "pnpm run --filter=api db:generate-migrations",
+    "db:deploy-migrations": "pnpm run --filter=api db:deploy-migrations",
+    "db:validate": "pnpm run --filter=api db:validate",
+    "db:format": "pnpm run --filter=api db:format",
+    "db:reset": "pnpm run --filter=api db:reset",
+    "format": "prettier apps/**/*.{ts,tsx} packages/**/*.ts --write",
+    "prepare": "husky",
+    "sourcemaps:api": "turbo run sourcemaps --filter=api",
+    "docker:run:web": "docker run --env-file .env --name ks-web --rm -p 3000:3000 ks-web",
+    "docker:build:web": "docker build -t ks-web -f apps/web/Dockerfile .",
+    "docker:run:api": "docker run --env-file .env --name ks-api --rm -p 4200:4200 ks-api",
+    "docker:build:api": "docker build -t ks-api -f apps/api/Dockerfile .",
+    "docker:run:platform": "docker run --env-file .env --name ks-platform --rm -p 3025:3025 ks-platform",
+    "docker:build:platform": "docker build -t ks-platform -f apps/platform/Dockerfile ."
+  },
+  "devDependencies": {
+    "@sentry/cli": "^2.28.6",
+    "@sentry/webpack-plugin": "^2.14.2",
+    "@types/jest": "^29.5.2",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^9.0.11",
+    "jest": "^29.7.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.5.11",
+    "ts-jest": "^29.1.0",
+    "tsconfig": "workspace:*",
+    "tsconfig-paths": "^4.2.0",
+    "turbo": "^1.12.4"
+  },
+  "dependencies": {
+    "@keyshade/api-client": "workspace:*",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^12.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.0.3",
+    "@semantic-release/release-notes-generator": "^14.0.0",
+    "@sentry/node": "^7.102.0",
+    "@sentry/profiling-node": "^7.102.0",
+    "@types/node": "^20.14.10",
+    "chalk": "^4.1.2",
+    "clsx": "^2.1.0",
+    "conventional-changelog-conventionalcommits": "8.0.0",
+    "conventional-changelog-writer": "8.0.0",
+    "framer-motion": "^11.2.9",
+    "million": "^3.0.5",
+    "moment": "^2.30.1",
+    "sharp": "^0.33.3",
+    "tailwind-merge": "^2.3.0",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.5.2",
+    "typescript-transform-paths": "^3.5.0",
+    "zod": "^3.23.6"
+  }
+}

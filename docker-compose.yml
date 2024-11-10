@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:13
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: keyshade_db
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf  # Mount custom pg_hba.conf
+    networks:
+      - keyshade-dev
+
+  redis:
+    image: redis:7
+    ports:
+      - '6379:6379'
+    networks:
+      - keyshade-dev
+    volumes:
+      - redis:/data
+
+  minio:
+    image: docker.io/bitnami/minio:2022
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: supersecret
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio:/data
+
+networks:
+  keyshade-dev:
+    driver: bridge
+
+volumes:
+  db:
+  redis:
+  minio:

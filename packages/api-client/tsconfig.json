@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "paths": {
+      "@api-client/*": ["./src/*"]
+    },
+    "outDir": "dist",
+    "plugins": [{ "transform": "typescript-transform-paths" }]
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false
+  },
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "jest.config.ts",
+    ".eslintrc.cjs"
+  ],
+  "exclude": ["node_modules", "dist"]
+}
